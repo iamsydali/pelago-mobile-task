@@ -31,7 +31,7 @@ export const TopSheet = ({ bottomSheetRef, snapPoints, children }: TopSheetProps
       if (bottomSheetRef.current) {
         if (index === -1) {
           bottomSheetRef.current.close();
-        } else if (index >= 0 && index < snapPoints.length) {
+        } else if (index >= 0 && index <= snapPoints.length) {
           bottomSheetRef.current.snapToIndex(index);
         }
       }
@@ -61,7 +61,7 @@ export const TopSheet = ({ bottomSheetRef, snapPoints, children }: TopSheetProps
         Math.abs(velocityY) > velocityThreshold
       ) {
         if (translationY > 0 || velocityY > velocityThreshold) {
-          targetIndex = Math.min(currentSnapIndex.value + 1, snapPoints.length - 1);
+          targetIndex = Math.min(currentSnapIndex.value + 1, snapPoints.length);
         } else if (translationY < 0 || velocityY < -velocityThreshold) {
           targetIndex = Math.max(currentSnapIndex.value - 1, 0);
         }

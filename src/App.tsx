@@ -17,7 +17,7 @@ function App() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const snapPoints = useMemo(() => ['25%', '50%', '75%'], []);
+  const snapPoints = useMemo(() => ['25%', '75%'], []);
 
   // callbacks
   const handleExpandPress = useCallback(() => {
