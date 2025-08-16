@@ -1,81 +1,57 @@
-import { useCallback, useMemo, useRef } from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 export interface TopSheetProps {
-  bottomSheetRef: React.RefObject<BottomSheet> | null;
+  bottomSheetRef: React.RefObject<BottomSheet | null>;
   snapPoints: (string | number)[];
   children: React.ReactNode;
 }
 
 export const TopSheet = ({ bottomSheetRef, snapPoints, children }: TopSheetProps) => {
-  // Convert snap points to be measured from top
-  const topSnapPoints = useMemo(() => {
-    return snapPoints.map(point => {
-      if (typeof point === 'string') {
-        // Convert percentage to inverse (e.g., '50%' becomes '50%' from top)
-        return point;
-      }
-      // Convert absolute value to measure from top
-      return SCREEN_HEIGHT - (point as number);
-    });
-  }, [snapPoints]);
-
-  // Create animated styles for the container
-  const animatedStyle = useAnimatedStyle(() => {
+  const invertedContainerStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { rotate: '180deg' },
-      ],
+      transform: [{ scaleY: -1 }]
     };
   });
 
-  // Style to flip the content back
-  const contentStyle = useMemo(() => ({
-    transform: [{ rotate: '180deg' }],
-  }), []);
-
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.animatedContainer, animatedStyle]}>
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={topSnapPoints}
-          enablePanDownToClose={true}
-          style={styles.bottomSheet}
-        >
-          <BottomSheetView style={[styles.contentContainer, contentStyle]}>
+    <Animated.View style={[styles.topSheetContainer, invertedContainerStyle]}>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        style={styles.bottomSheet}
+        onChange={index => {
+          console.log('TopSheet index:', index);
+        }}
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          <Animated.View style={[invertedContainerStyle, styles.content]}>
             {children}
-          </BottomSheetView>
-        </BottomSheet>
-      </Animated.View>
-    </View>
+          </Animated.View>
+        </BottomSheetView>
+      </BottomSheet>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  animatedContainer: {
+  topSheetContainer: {
     flex: 1,
+    backgroundColor: 'transparent'
   },
   bottomSheet: {
-    flex: 1,
+    flex: 1
   },
   contentContainer: {
-    flex: 1,
+    flex: 1
+  },
+  content: {
+    flex: 1
+  },
+  handle: {
+    height: 10,
+    backgroundColor: 'red'
   }
 });
