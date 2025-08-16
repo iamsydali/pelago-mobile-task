@@ -27,7 +27,6 @@ export const TopSheet = ({ bottomSheetRef, snapPoints, children }: TopSheetProps
 
   const snapToIndex = useCallback(
     (index: number) => {
-      console.log('snapToIndex', index);
       if (bottomSheetRef.current) {
         if (index === -1) {
           bottomSheetRef.current.close();
